@@ -1,0 +1,1746 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compteur de Récits</title>
+
+    <!-- PWA Configuration -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Zikirmatik">
+
+    <!-- Icônes pour iOS -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMzAiIGZpbGw9InVybCgjZ3JhZGllbnQwX2xpbmVhcl8xXzEpIi8+CjxwYXRoIGQ9Ik05NiA0OEM3My45MDg2IDQ4IDU2IDY1LjkwODYgNTYgODhDNTYgMTEwLjA5MSA3My45MDg2IDEyOCA5NiAxMjhDMTE4LjA5MSAxMjggMTM2IDExMC4wOTEgMTM2IDg4QzEzNiA2NS45MDg2IDExOC4wOTEgNDggOTYgNDhaIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjQiLz4KPHA+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWRpZW50MF9saW5lYXJfMV8xIiB4MT0iMCIgeTE9IjAiIHgyPSIxOTIiIHkyPSIxOTIiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iIzY2N0VFQSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM3NjRCQTIiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8L3N2Zz4K">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 100%;
+            padding: 10px;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: #4a5568;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 5px;
+            margin-bottom: 20px;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 12px;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            background: #667eea;
+            color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Compteur Tab */
+        .counter-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .category-select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            background: white;
+        }
+
+        .counter-display {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .counter-number {
+            font-size: 48px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .counter-label {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .counter-button {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 0 auto;
+            display: block;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .counter-button:active {
+            transform: scale(0.95);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.6);
+        }
+
+        .reset-button {
+            background: #e53e3e;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+
+        /* Management sections */
+        .management-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .add-category-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .category-input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .add-button {
+            background: #48bb78;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .categories-list {
+            list-style: none;
+        }
+
+        .category-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #f7fafc;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .delete-button {
+            background: #e53e3e;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        /* Statistics */
+        .stats-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .total-today {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .total-number {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stats-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .share-button, .refresh-button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .share-button {
+            background: #4299e1;
+            color: white;
+        }
+
+        .refresh-button {
+            background: #48bb78;
+            color: white;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .complete-stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            font-size: 14px;
+            min-width: 600px;
+        }
+
+        .complete-stats-table th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 10px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .complete-stats-table th:first-child {
+            text-align: left;
+            padding-left: 15px;
+        }
+
+        .complete-stats-table td {
+            padding: 12px 10px;
+            text-align: center;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .complete-stats-table td:first-child {
+            text-align: left;
+            padding-left: 15px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .complete-stats-table tbody tr:hover {
+            background: #f7fafc;
+        }
+
+        .totals-row {
+            background: #edf2f7 !important;
+            border-top: 2px solid #667eea;
+        }
+
+        .totals-row td {
+            font-weight: bold;
+            color: #2d3748;
+            padding: 15px 10px;
+        }
+
+        .stats-summary {
+            background: #f0fff4;
+            border-left: 4px solid #48bb78;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .stats-summary p {
+            margin: 0;
+            color: #2f855a;
+            font-weight: 600;
+        }
+
+        /* Reset options */
+        .reset-options {
+            margin-bottom: 30px;
+        }
+
+        .reset-option {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .reset-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .reset-buttons .reset-button {
+            flex: 1;
+            min-width: 120px;
+            background: #ed8936;
+            margin: 0;
+        }
+
+        .reset-buttons .danger {
+            background: #e53e3e !important;
+        }
+
+        .danger-zone {
+            background: #fed7d7;
+            border: 2px solid #fc8181;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .danger-zone h3 {
+            color: #e53e3e;
+            margin-bottom: 15px;
+        }
+
+        .danger-button {
+            background: #e53e3e;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .warning-text {
+            color: #744210;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        /* Backup section */
+        .backup-section {
+            background: #e6fffa;
+            border: 2px solid #38b2ac;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .backup-status {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .backup-status span {
+            font-weight: bold;
+            color: #38b2ac;
+            font-size: 16px;
+        }
+
+        .backup-status small {
+            display: block;
+            color: #4a5568;
+            margin-top: 5px;
+        }
+
+        .backup-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .backup-button {
+            flex: 1;
+            background: #38b2ac;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            min-width: 150px;
+        }
+
+        .backup-info {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #38b2ac;
+        }
+
+        .backup-info p {
+            margin: 8px 0;
+            font-size: 14px;
+            color: #2d3748;
+        }
+
+        .save-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #48bb78;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+
+        .save-indicator.show {
+            opacity: 1;
+        }
+
+        /* Notification personnalisée */
+        .custom-alert {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #e53e3e;
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            z-index: 10000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            max-width: 90%;
+            border: 3px solid #fff;
+        }
+
+        .custom-alert.show {
+            opacity: 1;
+        }
+
+        .custom-alert.warning {
+            background: #ed8936;
+        }
+
+        .custom-alert.success {
+            background: #48bb78;
+        }
+
+        /* Boîte de confirmation personnalisée */
+        .custom-confirm {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            font-size: 16px;
+            text-align: center;
+            z-index: 10000;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            max-width: 90%;
+            border: 3px solid #667eea;
+        }
+
+        .custom-confirm.show {
+            opacity: 1;
+        }
+
+        .custom-confirm h3 {
+            color: #4a5568;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .custom-confirm p {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .confirm-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .confirm-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            min-width: 80px;
+        }
+
+        .confirm-yes {
+            background: #48bb78;
+            color: white;
+        }
+
+        .confirm-no {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .confirm-yes:hover {
+            background: #38a169;
+        }
+
+        .confirm-no:hover {
+            background: #c53030;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 5px;
+            }
+            
+            .counter-button {
+                width: 100px;
+                height: 100px;
+                font-size: 20px;
+            }
+            
+            .counter-number {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📿 Compteur de Récits</h1>
+            <p>Suivez vos récits et prières quotidiennes</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('counter')">Compteur</button>
+            <button class="tab-button" onclick="showTab('management')">Gestion</button>
+            <button class="tab-button" onclick="showTab('stats')">Statistiques</button>
+        </div>
+
+        <!-- Onglet Compteur -->
+        <div id="counter" class="tab-content active">
+            <div class="counter-section">
+                <select id="categorySelect" class="category-select">
+                    <option value="">Sélectionner une catégorie</option>
+                </select>
+
+                <div class="counter-display">
+                    <div class="counter-number" id="counterDisplay">0</div>
+                    <div class="counter-label" id="counterLabel">Cliquez pour commencer</div>
+                    
+                    <button class="counter-button" id="countButton" onclick="incrementCounter()">
+                        +1
+                    </button>
+                    
+                    <button class="reset-button" onclick="resetDayCounter()">
+                        🔄 Reset affichage (stats préservées)
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Onglet Gestion -->
+        <div id="management" class="tab-content">
+            <div class="management-section">
+                <h2>Gérer les catégories</h2>
+                
+                <div class="add-category-form">
+                    <input type="text" id="newCategoryInput" class="category-input" placeholder="Nom de la nouvelle catégorie">
+                    <button class="add-button" onclick="addCategory()">Ajouter</button>
+                </div>
+
+                <ul id="categoriesList" class="categories-list">
+                    <!-- Les catégories seront ajoutées ici -->
+                </ul>
+            </div>
+
+            <div class="management-section">
+                <h2>Sauvegarde et récupération</h2>
+                
+                <div class="backup-section">
+                    <div class="backup-status">
+                        <span id="saveStatus">💾 Sauvegarde automatique activée</span>
+                        <small id="lastSave">Dernière sauvegarde: maintenant</small>
+                    </div>
+                    
+                    <div class="backup-buttons">
+                        <button class="backup-button" onclick="exportData()">📥 Exporter mes données</button>
+                        <button class="backup-button" onclick="document.getElementById('importFile').click()">📤 Importer des données</button>
+                        <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
+                    </div>
+                    
+                    <div class="backup-info">
+                        <p>✅ Vos données sont automatiquement sauvegardées sur votre téléphone</p>
+                        <p>📱 Elles restent même si vous fermez l'application</p>
+                        <p>🔒 Utilisez l'export pour créer une sauvegarde de sécurité</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="management-section">
+                <h2>Effacer les récits</h2>
+                
+                <div class="reset-options">
+                    <div class="reset-option">
+                        <select id="categoryToReset" class="category-select">
+                            <option value="">Sélectionner une catégorie</option>
+                        </select>
+                        <div class="reset-buttons">
+                            <button class="reset-button" onclick="resetTodayCategory()">Effacer aujourd'hui</button>
+                            <button class="reset-button" onclick="resetWeekCategory()">Effacer cette semaine</button>
+                            <button class="reset-button" onclick="resetMonthCategory()">Effacer ce mois</button>
+                            <button class="reset-button danger" onclick="resetCategoryCompletely()">Effacer tout l'historique</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="danger-zone">
+                    <h3>⚠️ Zone de danger</h3>
+                    <button class="danger-button" onclick="resetAllData()">Effacer TOUTES les données</button>
+                    <p class="warning-text">Cette action supprimera définitivement tous vos compteurs et ne peut pas être annulée !</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Onglet Statistiques -->
+        <div id="stats" class="tab-content">
+            <div class="stats-section">
+                <div class="total-today">
+                    <div class="total-number" id="totalToday">0</div>
+                    <div>Total aujourd'hui</div>
+                </div>
+
+                <div class="stats-actions">
+                    <button class="share-button" onclick="shareStatsBySMS()">📱 Partager par SMS</button>
+                    <button class="refresh-button" onclick="updateStats()">🔄 Actualiser</button>
+                </div>
+
+                <h2>Toutes mes statistiques</h2>
+                
+                <div class="table-container">
+                    <table class="complete-stats-table" id="completeStatsTable">
+                        <thead>
+                            <tr>
+                                <th>Catégorie</th>
+                                <th>Aujourd'hui</th>
+                                <th>Cette semaine</th>
+                                <th>Ce mois</th>
+                                <th>Cette année</th>
+                                <th>Total général</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Les statistiques seront ajoutées ici -->
+                        </tbody>
+                        <tfoot>
+                            <tr class="totals-row">
+                                <td><strong>TOTAUX</strong></td>
+                                <td><strong id="totalDay">0</strong></td>
+                                <td><strong id="totalWeek">0</strong></td>
+                                <td><strong id="totalMonth">0</strong></td>
+                                <td><strong id="totalYear">0</strong></td>
+                                <td><strong id="totalAll">0</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div class="stats-summary">
+                    <p id="summaryText">📊 Résumé de vos récits</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Indicateur de sauvegarde -->
+    <div id="saveIndicator" class="save-indicator">✅ Sauvegardé</div>
+
+    <script>
+        // Variables globales - SYSTÈME SIMPLIFIÉ
+        let categories = JSON.parse(localStorage.getItem('categories')) || ['SubhanAllah', 'Alhamdulillah', 'Allahu Akbar'];
+        let counters = JSON.parse(localStorage.getItem('counters')) || {};
+        let currentCategory = '';
+        let currentDate = new Date().toDateString();
+        let visualOffset = 0; // Décalage visuel pour l'affichage
+
+        // Fonction pour afficher une confirmation personnalisée
+        function showCustomConfirm(title, message, onYes, onNo = null) {
+            // Supprimer toute confirmation existante
+            const existingConfirm = document.querySelector('.custom-confirm');
+            if (existingConfirm) {
+                existingConfirm.remove();
+            }
+            
+            // Créer la boîte de confirmation
+            const confirmDiv = document.createElement('div');
+            confirmDiv.className = 'custom-confirm';
+            confirmDiv.innerHTML = `
+                <h3>${title}</h3>
+                <p>${message}</p>
+                <div class="confirm-buttons">
+                    <button class="confirm-btn confirm-yes">✅ Oui</button>
+                    <button class="confirm-btn confirm-no">❌ Non</button>
+                </div>
+            `;
+            document.body.appendChild(confirmDiv);
+            
+            // Gestionnaires d'événements
+            const yesBtn = confirmDiv.querySelector('.confirm-yes');
+            const noBtn = confirmDiv.querySelector('.confirm-no');
+            
+            function closeConfirm() {
+                confirmDiv.classList.remove('show');
+                setTimeout(() => {
+                    if (confirmDiv && confirmDiv.parentNode) {
+                        confirmDiv.remove();
+                    }
+                }, 300);
+            }
+            
+            yesBtn.addEventListener('click', () => {
+                closeConfirm();
+                if (onYes) onYes();
+            });
+            
+            noBtn.addEventListener('click', () => {
+                closeConfirm();
+                if (onNo) onNo();
+            });
+            
+            // Afficher avec animation
+            setTimeout(() => {
+                confirmDiv.classList.add('show');
+            }, 100);
+        }
+
+        // Fonction pour afficher une notification personnalisée
+        function showCustomAlert(message, type = 'error', duration = 3000) {
+            // Supprimer toute notification existante
+            const existingAlert = document.querySelector('.custom-alert');
+            if (existingAlert) {
+                existingAlert.remove();
+            }
+            
+            // Créer la nouvelle notification
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `custom-alert ${type}`;
+            alertDiv.innerHTML = message;
+            document.body.appendChild(alertDiv);
+            
+            // Afficher avec animation
+            setTimeout(() => {
+                alertDiv.classList.add('show');
+            }, 100);
+            
+            // Masquer après le délai
+            setTimeout(() => {
+                alertDiv.classList.remove('show');
+                setTimeout(() => {
+                    if (alertDiv && alertDiv.parentNode) {
+                        alertDiv.remove();
+                    }
+                }, 300);
+            }, duration);
+        }
+
+        // Utilitaires de date
+        function getWeekStart(date) {
+            const d = new Date(date);
+            const day = d.getDay();
+            const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+            return new Date(d.setDate(diff));
+        }
+
+        function getWeekEnd(date) {
+            const weekStart = getWeekStart(date);
+            return new Date(weekStart.getTime() + 6 * 24 * 60 * 60 * 1000);
+        }
+
+        function getMonthStart(date) {
+            return new Date(date.getFullYear(), date.getMonth(), 1);
+        }
+
+        function getMonthEnd(date) {
+            return new Date(date.getFullYear(), date.getMonth() + 1, 0);
+        }
+
+        function getYearStart(date) {
+            return new Date(date.getFullYear(), 0, 1);
+        }
+
+        function getYearEnd(date) {
+            return new Date(date.getFullYear(), 11, 31);
+        }
+
+        // Initialiser les compteurs - SYSTÈME SIMPLIFIÉ ET FIABLE
+        function initializeCounters() {
+            categories.forEach(cat => {
+                if (!counters[cat]) {
+                    counters[cat] = {};
+                }
+                if (!counters[cat][currentDate]) {
+                    counters[cat][currentDate] = 0;
+                }
+            });
+            saveCounters();
+        }
+
+        // Calculer les statistiques pour toutes les périodes à partir des données quotidiennes
+        function getStatisticsForCategory(category) {
+            if (!counters[category]) {
+                return { day: 0, week: 0, month: 0, year: 0, total: 0 };
+            }
+
+            const today = new Date();
+            const todayKey = today.toDateString();
+            
+            // Calculer les bornes des périodes
+            const weekStart = getWeekStart(today);
+            const weekEnd = getWeekEnd(today);
+            const monthStart = getMonthStart(today);
+            const monthEnd = getMonthEnd(today);
+            const yearStart = getYearStart(today);
+            const yearEnd = getYearEnd(today);
+
+            let dayCount = counters[category][todayKey] || 0;
+            let weekCount = 0;
+            let monthCount = 0;
+            let yearCount = 0;
+            let totalCount = 0;
+
+            // Parcourir tous les jours enregistrés pour cette catégorie
+            Object.keys(counters[category]).forEach(dateKey => {
+                const date = new Date(dateKey);
+                const count = counters[category][dateKey] || 0;
+                
+                // Ajouter au total général
+                totalCount += count;
+                
+                // Vérifier si c'est dans la semaine courante
+                if (date >= weekStart && date <= weekEnd) {
+                    weekCount += count;
+                }
+                
+                // Vérifier si c'est dans le mois courant
+                if (date >= monthStart && date <= monthEnd) {
+                    monthCount += count;
+                }
+                
+                // Vérifier si c'est dans l'année courante
+                if (date >= yearStart && date <= yearEnd) {
+                    yearCount += count;
+                }
+            });
+
+            return {
+                day: dayCount,
+                week: weekCount,
+                month: monthCount,
+                year: yearCount,
+                total: totalCount
+            };
+        }
+
+        // Sauvegardes
+        function saveCategories() {
+            try {
+                localStorage.setItem('categories', JSON.stringify(categories));
+                localStorage.setItem('lastSave', new Date().toISOString());
+                showSaveIndicator();
+                updateSaveStatus();
+                return true;
+            } catch (error) {
+                console.error('Erreur sauvegarde catégories:', error);
+                return false;
+            }
+        }
+
+        function saveCounters() {
+            try {
+                localStorage.setItem('counters', JSON.stringify(counters));
+                localStorage.setItem('lastSave', new Date().toISOString());
+                showSaveIndicator();
+                updateSaveStatus();
+                return true;
+            } catch (error) {
+                console.error('Erreur sauvegarde compteurs:', error);
+                return false;
+            }
+        }
+
+        // Indicateur de sauvegarde
+        function showSaveIndicator() {
+            let indicator = document.getElementById('saveIndicator');
+            if (!indicator) {
+                const div = document.createElement('div');
+                div.id = 'saveIndicator';
+                div.className = 'save-indicator';
+                div.textContent = '✅ Sauvegardé';
+                document.body.appendChild(div);
+                indicator = div;
+            }
+            
+            indicator.classList.add('show');
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 2000);
+        }
+
+        function updateSaveStatus() {
+            const lastSave = localStorage.getItem('lastSave');
+            if (lastSave) {
+                const date = new Date(lastSave);
+                const now = new Date();
+                const diff = Math.floor((now - date) / 1000);
+                
+                let timeText = '';
+                if (diff < 60) {
+                    timeText = 'il y a quelques secondes';
+                } else if (diff < 3600) {
+                    timeText = `il y a ${Math.floor(diff / 60)} minutes`;
+                } else {
+                    timeText = date.toLocaleDateString('fr-FR');
+                }
+                
+                const lastSaveElement = document.getElementById('lastSave');
+                if (lastSaveElement) {
+                    lastSaveElement.textContent = `Dernière sauvegarde: ${timeText}`;
+                }
+            }
+        }
+
+        // Changer d'onglet
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            setTimeout(() => {
+                if (tabName === 'stats') {
+                    updateStats();
+                } else if (tabName === 'management') {
+                    updateCategoriesList();
+                    updateCategorySelect();
+                }
+            }, 100);
+        }
+
+        // Mettre à jour les sélecteurs
+        function updateCategorySelect() {
+            const select = document.getElementById('categorySelect');
+            const resetSelect = document.getElementById('categoryToReset');
+            
+            // Sélecteur principal
+            if (select) {
+                select.innerHTML = '<option value="">Sélectionner une catégorie</option>';
+                categories.forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat;
+                    option.textContent = cat;
+                    select.appendChild(option);
+                });
+            }
+            
+            // Sélecteur pour l'effacement
+            if (resetSelect) {
+                resetSelect.innerHTML = '<option value="">Sélectionner une catégorie</option>';
+                categories.forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat;
+                    option.textContent = cat;
+                    resetSelect.appendChild(option);
+                });
+            }
+        }
+
+        // Mettre à jour la liste des catégories
+        function updateCategoriesList() {
+            const list = document.getElementById('categoriesList');
+            if (!list) return;
+            
+            list.innerHTML = '';
+            
+            categories.forEach((cat, index) => {
+                const li = document.createElement('li');
+                li.className = 'category-item';
+                
+                // Calculer le total pour cette catégorie
+                const stats = getStatisticsForCategory(cat);
+                
+                li.innerHTML = `
+                    <div>
+                        <strong>${cat}</strong>
+                        <small style="color: #666; display: block;">Total: ${stats.total} récits</small>
+                    </div>
+                    <button class="delete-button" onclick="deleteCategory(${index})">Supprimer catégorie</button>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        // Ajouter une catégorie
+        function addCategory() {
+            const input = document.getElementById('newCategoryInput');
+            if (!input) return;
+            
+            const newCategory = input.value.trim();
+            
+            if (newCategory && !categories.includes(newCategory)) {
+                categories.push(newCategory);
+                saveCategories();
+                initializeCounters();
+                updateCategorySelect();
+                updateCategoriesList();
+                updateStats();
+                input.value = '';
+                showCustomAlert(`✅ Catégorie "${newCategory}" ajoutée !`, 'success', 2000);
+            } else if (categories.includes(newCategory)) {
+                showCustomAlert('⚠️ Cette catégorie existe déjà !', 'warning', 2500);
+            } else {
+                showCustomAlert('⚠️ Veuillez saisir un nom de catégorie !', 'warning', 2500);
+            }
+        }
+
+        // Supprimer une catégorie
+        function deleteCategory(index) {
+            const categoryName = categories[index];
+            
+            showCustomConfirm(
+                '🗑️ Supprimer catégorie',
+                `Êtes-vous sûr de vouloir supprimer la catégorie "${categoryName}" ?<br><br>⚠️ Cette action supprimera aussi toutes ses données.`,
+                function() {
+                    // Confirmation "Oui"
+                    categories.splice(index, 1);
+                    delete counters[categoryName];
+                    saveCategories();
+                    saveCounters();
+                    updateCategorySelect();
+                    updateCategoriesList();
+                    updateStats();
+                    
+                    if (currentCategory === categoryName) {
+                        currentCategory = '';
+                        visualOffset = 0;
+                        const counterDisplay = document.getElementById('counterDisplay');
+                        const counterLabel = document.getElementById('counterLabel');
+                        if (counterDisplay) counterDisplay.textContent = '0';
+                        if (counterLabel) counterLabel.textContent = 'Sélectionner une catégorie';
+                    }
+                    
+                    showCustomAlert(`✅ Catégorie "${categoryName}" supprimée !`, 'success', 2000);
+                }
+            );
+        }
+
+        // Mettre à jour l'affichage du compteur
+        function updateCounterDisplay() {
+            const display = document.getElementById('counterDisplay');
+            const label = document.getElementById('counterLabel');
+            
+            if (!display || !label) return;
+            
+            if (currentCategory) {
+                const stats = getStatisticsForCategory(currentCategory);
+                const visualCount = Math.max(0, stats.day - visualOffset);
+                display.textContent = visualCount;
+                label.textContent = `${currentCategory} - Aujourd'hui`;
+            } else {
+                display.textContent = '0';
+                label.textContent = 'Sélectionner une catégorie';
+            }
+        }
+
+        // Incrémenter le compteur - VERSION SIMPLE ET FIABLE
+        function incrementCounter() {
+            if (!currentCategory) {
+                showCustomAlert('🔔 CHOISIR UNE CATÉGORIE !<br><br>Veuillez d\'abord sélectionner une catégorie dans le menu déroulant avant de compter vos récits.', 'warning', 4000);
+                return;
+            }
+
+            // Vérifier si on a changé de jour
+            const today = new Date().toDateString();
+            if (today !== currentDate) {
+                currentDate = today;
+                initializeCounters();
+            }
+
+            // Incrémenter simplement le compteur du jour
+            if (!counters[currentCategory][currentDate]) {
+                counters[currentCategory][currentDate] = 0;
+            }
+            counters[currentCategory][currentDate]++;
+            
+            if (saveCounters()) {
+                updateCounterDisplay();
+                updateStats();
+                
+                // Animation du bouton
+                const button = document.getElementById('countButton');
+                if (button) {
+                    button.style.transform = 'scale(1.1)';
+                    setTimeout(() => {
+                        button.style.transform = 'scale(1)';
+                    }, 150);
+                }
+            } else {
+                // En cas d'erreur de sauvegarde, annuler l'incrémentation
+                counters[currentCategory][currentDate]--;
+            }
+        }
+
+        // Remettre à zéro SEULEMENT l'affichage visuel (pas les statistiques)
+        function resetDayCounter() {
+            if (!currentCategory) {
+                showCustomAlert('🔔 CHOISIR UNE CATÉGORIE !<br><br>Veuillez d\'abord sélectionner une catégorie.', 'warning', 3000);
+                return;
+            }
+            
+            showCustomConfirm(
+                '🔄 Reset de l\'affichage',
+                `Remettre à zéro l'AFFICHAGE du compteur pour "${currentCategory}" ?<br><br>⚠️ Les statistiques ne seront PAS affectées.`,
+                function() {
+                    // Confirmation "Oui"
+                    const stats = getStatisticsForCategory(currentCategory);
+                    visualOffset = stats.day; // L'affichage sera : realCount - realCount = 0
+                    updateCounterDisplay();
+                    showCustomAlert('✅ Affichage remis à zéro !<br>📊 Vos statistiques sont préservées', 'success', 3000);
+                },
+                function() {
+                    // Confirmation "Non" - ne rien faire
+                    showCustomAlert('❌ Reset annulé', 'warning', 2000);
+                }
+            );
+        }
+
+        // FONCTION DE STATISTIQUES - VERSION CORRIGÉE ET FIABLE
+        function updateStats() {
+            try {
+                let totalToday = 0;
+                let totalWeek = 0;
+                let totalMonth = 0;
+                let totalYear = 0;
+                let totalAll = 0;
+                
+                // Calculer les totaux pour toutes les catégories
+                categories.forEach(cat => {
+                    const stats = getStatisticsForCategory(cat);
+                    totalToday += stats.day;
+                    totalWeek += stats.week;
+                    totalMonth += stats.month;
+                    totalYear += stats.year;
+                    totalAll += stats.total;
+                });
+                
+                // Mettre à jour le header
+                const todayElement = document.getElementById('totalToday');
+                if (todayElement) {
+                    todayElement.textContent = totalToday;
+                }
+                
+                // Remplir le tableau
+                const tbody = document.querySelector('#completeStatsTable tbody');
+                if (tbody) {
+                    tbody.innerHTML = '';
+                    
+                    categories.forEach(cat => {
+                        const row = document.createElement('tr');
+                        const stats = getStatisticsForCategory(cat);
+                        
+                        row.innerHTML = `
+                            <td>${cat}</td>
+                            <td>${stats.day}</td>
+                            <td>${stats.week}</td>
+                            <td>${stats.month}</td>
+                            <td>${stats.year}</td>
+                            <td>${stats.total}</td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                }
+                
+                // Mettre à jour les totaux
+                const totalElements = {
+                    'totalDay': totalToday,
+                    'totalWeek': totalWeek,
+                    'totalMonth': totalMonth,
+                    'totalYear': totalYear,
+                    'totalAll': totalAll
+                };
+                
+                Object.keys(totalElements).forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        element.textContent = totalElements[id];
+                    }
+                });
+                
+                // Résumé
+                const summaryElement = document.getElementById('summaryText');
+                if (summaryElement) {
+                    let summary = `📊 Aujourd'hui: ${totalToday} récits`;
+                    if (totalWeek > totalToday) summary += ` • Cette semaine: ${totalWeek} récits`;
+                    if (totalMonth > totalWeek) summary += ` • Ce mois: ${totalMonth} récits`;
+                    if (totalYear > totalMonth) summary += ` • Cette année: ${totalYear} récits`;
+                    summary += ` • Total général: ${totalAll} récits 🤲`;
+                    summaryElement.textContent = summary;
+                }
+                
+            } catch (error) {
+                console.error('Erreur statistiques:', error);
+            }
+        }
+
+        // Fonctions d'effacement simplifiées et cohérentes
+        function resetTodayCategory() {
+            const category = document.getElementById('categoryToReset').value;
+            if (!category) {
+                showCustomAlert('🔔 CHOISIR UNE CATÉGORIE !<br><br>Veuillez sélectionner une catégorie à effacer.', 'warning', 3000);
+                return;
+            }
+            
+            showCustomConfirm(
+                '🗑️ Effacer aujourd\'hui',
+                `Effacer tous les récits d'AUJOURD'HUI pour "${category}" ?<br><br>⚠️ Cette action affectera les statistiques !`,
+                function() {
+                    const today = new Date().toDateString();
+                    if (counters[category] && counters[category][today]) {
+                        counters[category][today] = 0;
+                        saveCounters();
+                        updateCounterDisplay();
+                        updateStats();
+                        showCustomAlert('✅ Récits d\'aujourd\'hui effacés !', 'success', 2000);
+                    }
+                }
+            );
+        }
+
+        function resetWeekCategory() {
+            const category = document.getElementById('categoryToReset').value;
+            if (!category) {
+                showCustomAlert('🔔 CHOISIR UNE CATÉGORIE !<br><br>Veuillez sélectionner une catégorie à effacer.', 'warning', 3000);
+                return;
+            }
+            
+            showCustomConfirm(
+                '🗑️ Effacer cette semaine',
+                `Effacer tous les récits de CETTE SEMAINE pour "${category}" ?<br><br>⚠️ Cette action affectera les statistiques !`,
+                function() {
+                    const today = new Date();
+                    const weekStart = getWeekStart(today);
+                    const weekEnd = getWeekEnd(today);
+                    
+                    if (counters[category]) {
+                        Object.keys(counters[category]).forEach(dateStr => {
+                            const date = new Date(dateStr);
+                            if (date >= weekStart && date <= weekEnd) {
+                                counters[category][dateStr] = 0;
+                            }
+                        });
+                        saveCounters();
+                        updateCounterDisplay();
+                        updateStats();
+                        showCustomAlert('✅ Récits de cette semaine effacés !', 'success', 2000);
+                    }
+                }
+            );
+        }
+
+        function resetMonthCategory() {
+            const category = document.getElementById('categoryToReset').value;
+            if (!category) {
+                showCustomAlert('🔔 CHOISIR UNE CATÉGORIE !<br><br>Veuillez sélectionner une catégorie à effacer.', 'warning', 3000);
+                return;
+            }
+            
+            showCustomConfirm(
+                '🗑️ Effacer ce mois',
+                `Effacer tous les récits de CE MOIS pour "${category}" ?<br><br>⚠️ Cette action affectera les statistiques !`,
+                function() {
+                    const today = new Date();
+                    const monthStart = getMonthStart(today);
+                    const monthEnd = getMonthEnd(today);
+                    
+                    if (counters[category]) {
+                        Object.keys(counters[category]).forEach(dateStr => {
+                            const date = new Date(dateStr);
+                            if (date >= monthStart && date <= monthEnd) {
+                                counters[category][dateStr] = 0;
+                            }
+                        });
+                        saveCounters();
+                        updateCounterDisplay();
+                        updateStats();
+                        showCustomAlert('✅ Récits de ce mois effacés !', 'success', 2000);
+                    }
+                }
+            );
+        }
+
+        function resetCategoryCompletely() {
+            const category = document.getElementById('categoryToReset').value;
+            if (!category) {
+                showCustomAlert('🔔 CHOISIR UNE CATÉGORIE !<br><br>Veuillez sélectionner une catégorie à effacer.', 'warning', 3000);
+                return;
+            }
+            
+            showCustomConfirm(
+                '⚠️ DANGER - Effacement total',
+                `Effacer DÉFINITIVEMENT tout l'historique de "${category}" ?<br><br>🔥 Cette action est IRRÉVERSIBLE !`,
+                function() {
+                    showCustomConfirm(
+                        '🚨 DERNIÈRE CHANCE',
+                        `Êtes-vous VRAIMENT sûr ?<br><br>💀 TOUT l'historique de "${category}" sera perdu !`,
+                        function() {
+                            // Réinitialiser complètement la catégorie
+                            counters[category] = {};
+                            counters[category][currentDate] = 0;
+                            
+                            saveCounters();
+                            updateCounterDisplay();
+                            updateStats();
+                            showCustomAlert('💥 Historique complètement effacé !', 'warning', 3000);
+                        }
+                    );
+                }
+            );
+        }
+
+        function resetAllData() {
+            showCustomConfirm(
+                '🚨 DANGER EXTRÊME',
+                'Effacer TOUTES vos données de récits ?<br><br>💀 Cela supprimera DÉFINITIVEMENT :<br>• Tous les compteurs<br>• Tout l\'historique<br>• Toutes les statistiques',
+                function() {
+                    showCustomConfirm(
+                        '💣 DERNIÈRE CHANCE',
+                        'Êtes-vous ABSOLUMENT certain ?<br><br>🔥 Cette action est IRRÉVERSIBLE !',
+                        function() {
+                            // Demander la confirmation par saisie
+                            const confirmationDiv = document.createElement('div');
+                            confirmationDiv.className = 'custom-confirm';
+                            confirmationDiv.innerHTML = `
+                                <h3>🔒 Confirmation finale</h3>
+                                <p>Tapez exactement <strong>"EFFACER"</strong> pour confirmer :</p>
+                                <input type="text" id="confirmInput" style="padding: 10px; font-size: 16px; margin: 10px 0; text-align: center; border: 2px solid #e53e3e; border-radius: 5px;">
+                                <div class="confirm-buttons">
+                                    <button class="confirm-btn confirm-yes">Valider</button>
+                                    <button class="confirm-btn confirm-no">Annuler</button>
+                                </div>
+                            `;
+                            document.body.appendChild(confirmationDiv);
+                            
+                            const input = confirmationDiv.querySelector('#confirmInput');
+                            const yesBtn = confirmationDiv.querySelector('.confirm-yes');
+                            const noBtn = confirmationDiv.querySelector('.confirm-no');
+                            
+                            function closeConfirmDiv() {
+                                confirmationDiv.remove();
+                            }
+                            
+                            yesBtn.addEventListener('click', () => {
+                                if (input.value === 'EFFACER') {
+                                    // Réinitialiser toutes les catégories avec le nouveau système
+                                    const today = new Date();
+                                    counters = {};
+                                    categories.forEach(cat => {
+                                        counters[cat] = {
+                                            daily: { [getDayKey(today)]: 0 },
+                                            weekly: { [getWeekKey(today)]: 0 },
+                                            monthly: { [getMonthKey(today)]: 0 },
+                                            yearly: { [getYearKey(today)]: 0 },
+                                            total: 0
+                                        };
+                                    });
+                                    
+                                    saveCounters();
+                                    updateCounterDisplay();
+                                    updateStats();
+                                    closeConfirmDiv();
+                                    showCustomAlert('💥 TOUTES vos données ont été effacées !', 'warning', 4000);
+                                } else {
+                                    showCustomAlert('❌ Texte incorrect ! Données préservées.', 'warning', 3000);
+                                    closeConfirmDiv();
+                                }
+                            });
+                            
+                            noBtn.addEventListener('click', () => {
+                                closeConfirmDiv();
+                                showCustomAlert('✅ Annulation - vos données sont sauvées !', 'success', 3000);
+                            });
+                            
+                            setTimeout(() => {
+                                confirmationDiv.classList.add('show');
+                                input.focus();
+                            }, 100);
+                        }
+                    );
+                }
+            );
+        }
+
+        // Export/Import
+        function exportData() {
+            try {
+                const exportData = {
+                    categories: categories,
+                    counters: counters,
+                    exportDate: new Date().toISOString(),
+                    version: '1.0'
+                };
+                
+                const dataStr = JSON.stringify(exportData, null, 2);
+                const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(dataBlob);
+                link.download = `compteur-recits-${new Date().toISOString().split('T')[0]}.json`;
+                link.click();
+                
+                showCustomAlert('✅ Export réussi !<br>Fichier téléchargé avec succès', 'success', 3000);
+            } catch (error) {
+                console.error('Erreur export:', error);
+                showCustomAlert('❌ Erreur lors de l\'export', 'error', 3000);
+            }
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    
+                    if (!importedData.categories || !importedData.counters) {
+                        throw new Error('Format invalide');
+                    }
+                    
+                    showCustomConfirm(
+                        '📤 Importer des données',
+                        '⚠️ Importer ces données remplacera TOUTES vos données actuelles.<br><br>Voulez-vous continuer ?',
+                        function() {
+                            // Confirmation "Oui"
+                            categories = importedData.categories;
+                            counters = importedData.counters;
+                            
+                            saveCategories();
+                            saveCounters();
+                            
+                            updateCategorySelect();
+                            updateCategoriesList();
+                            updateCounterDisplay();
+                            updateStats();
+                            
+                            showCustomAlert('✅ Import réussi !<br>Vos données ont été restaurées', 'success', 3000);
+                        },
+                        function() {
+                            // Confirmation "Non"
+                            showCustomAlert('❌ Import annulé<br>Vos données actuelles sont préservées', 'warning', 3000);
+                        }
+                    );
+                    
+                } catch (error) {
+                    console.error('Erreur import:', error);
+                    showCustomAlert('❌ Erreur lors de l\'import<br>Vérifiez le fichier', 'error', 3000);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Partage SMS
+        function shareStatsBySMS() {
+            const today = new Date();
+            const dateStr = today.toLocaleDateString('fr-FR');
+            const todayDateString = today.toDateString();
+            
+            let message = `🕌 MES RÉCITS SPIRITUELS - ${dateStr}\n`;
+            message += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+            
+            let totalToday = 0;
+            let totalGeneral = 0;
+            
+            categories.forEach(cat => {
+                const todayCount = (counters[cat] && counters[cat][todayDateString]) ? counters[cat][todayDateString] : 0;
+                
+                let categoryTotal = 0;
+                if (counters[cat]) {
+                    Object.values(counters[cat]).forEach(count => {
+                        categoryTotal += count || 0;
+                    });
+                }
+                
+                totalToday += todayCount;
+                totalGeneral += categoryTotal;
+                
+                if (categoryTotal > 0) {
+                    message += `📿 ${cat}:\n`;
+                    message += `   Aujourd'hui: ${todayCount}\n`;
+                    message += `   Total: ${categoryTotal}\n\n`;
+                }
+            });
+            
+            message += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+            message += `📊 RÉSUMÉ:\n`;
+            message += `• Aujourd'hui: ${totalToday} récits\n`;
+            message += `• TOTAL GÉNÉRAL: ${totalGeneral} récits\n\n`;
+            message += `🤲 Qu'Allah accepte nos invocations\n`;
+            message += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
+            
+            try {
+                // Créer le lien SMS
+                const smsLink = `sms:?body=${encodeURIComponent(message)}`;
+                const link = document.createElement('a');
+                link.href = smsLink;
+                link.click();
+                
+                // Copier dans le presse-papiers
+                navigator.clipboard.writeText(message).then(() => {
+                    showCustomAlert('📱 SMS ouvert !<br>✅ Message copié dans le presse-papiers', 'success', 4000);
+                }).catch(() => {
+                    showCustomAlert('📱 Application SMS ouverte !<br>📋 Copiez manuellement si nécessaire', 'success', 4000);
+                });
+                
+            } catch (error) {
+                // En cas d'erreur, juste copier dans le presse-papiers
+                navigator.clipboard.writeText(message).then(() => {
+                    showCustomAlert('📋 Message copié dans le presse-papiers !<br>Collez dans votre app SMS', 'success', 4000);
+                }).catch(() => {
+                    showCustomAlert('❌ Impossible d\'ouvrir SMS<br>Essayez de copier manuellement', 'warning', 4000);
+                });
+            }
+        }
+
+        // Vérification stockage
+        function checkStorageAvailability() {
+            try {
+                const test = 'test';
+                localStorage.setItem(test, test);
+                localStorage.removeItem(test);
+                return true;
+            } catch (error) {
+                return false;
+            }
+        }
+
+        // Sauvegarde automatique
+        function autoSave() {
+            if (checkStorageAvailability()) {
+                saveCounters();
+                saveCategories();
+            }
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                const savedCategories = localStorage.getItem('categories');
+                const savedCounters = localStorage.getItem('counters');
+                
+                if (savedCategories) {
+                    categories = JSON.parse(savedCategories);
+                }
+                
+                if (savedCounters) {
+                    counters = JSON.parse(savedCounters);
+                }
+            } catch (error) {
+                console.error('Erreur chargement:', error);
+            }
+            
+            initializeCounters();
+            updateCategorySelect();
+            updateCategoriesList();
+            updateCounterDisplay();
+            updateSaveStatus();
+            
+            // Événements
+            const categorySelect = document.getElementById('categorySelect');
+            if (categorySelect) {
+                categorySelect.addEventListener('change', function() {
+                    currentCategory = this.value;
+                    updateCounterDisplay();
+                    updateStats();
+                });
+            }
+
+            const newCategoryInput = document.getElementById('newCategoryInput');
+            if (newCategoryInput) {
+                newCategoryInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        addCategory();
+                    }
+                });
+            }
+            
+            setTimeout(() => {
+                updateStats();
+            }, 300);
+            
+            if (!localStorage.getItem('hasUsedApp')) {
+                localStorage.setItem('hasUsedApp', 'true');
+            }
+        });
+
+        // Sauvegardes périodiques
+        window.addEventListener('beforeunload', autoSave);
+        window.addEventListener('blur', autoSave);
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) autoSave();
+        });
+
+        setInterval(autoSave, 30000);
+        setInterval(updateSaveStatus, 60000);
+        setInterval(updateStats, 60000);
+
+        // Service Worker pour PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(function(registration) {
+                        console.log('Service Worker enregistré avec succès:', registration.scope);
+
+                        // Vérifier les mises à jour
+                        registration.addEventListener('updatefound', function() {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', function() {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // Nouvelle version disponible
+                                    if (confirm('🔄 Nouvelle version disponible ! Recharger ?')) {
+                                        newWorker.postMessage({ type: 'SKIP_WAITING' });
+                                        window.location.reload();
+                                    }
+                                }
+                            });
+                        });
+                    })
+                    .catch(function(error) {
+                        console.log('Erreur Service Worker:', error);
+                    });
+            });
+
+            // Écouter les changements de Service Worker
+            navigator.serviceWorker.addEventListener('controllerchange', function() {
+                window.location.reload();
+            });
+        }
+
+        // Détection installation PWA
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', function(e) {
+            e.preventDefault();
+            deferredPrompt = e;
+
+            // Afficher un bouton d'installation après 3 secondes
+            setTimeout(() => {
+                if (deferredPrompt && !localStorage.getItem('pwa-dismissed')) {
+                    showCustomConfirm(
+                        '📱 Installer l\'application',
+                        'Voulez-vous installer Zikirmatik sur votre écran d\'accueil ?<br><br>✅ Accès rapide<br>📱 Fonctionne hors-ligne<br>🔒 Vos données restent privées',
+                        function() {
+                            deferredPrompt.prompt();
+                            deferredPrompt.userChoice.then((choiceResult) => {
+                                if (choiceResult.outcome === 'accepted') {
+                                    showCustomAlert('✅ Application installée !', 'success', 3000);
+                                } else {
+                                    localStorage.setItem('pwa-dismissed', 'true');
+                                }
+                                deferredPrompt = null;
+                            });
+                        },
+                        function() {
+                            localStorage.setItem('pwa-dismissed', 'true');
+                        }
+                    );
+                }
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
