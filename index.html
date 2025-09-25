@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compteur de Récits</title>
+    <title>Zikirmatik</title>
 
     <!-- PWA Configuration -->
     <link rel="manifest" href="manifest.json">
@@ -588,134 +588,134 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📿 Compteur de Récits</h1>
-            <p>Suivez vos récits et prières quotidiennes</p>
+            <h1>📿 Zikirmatik</h1>
+            <p>Günlük zikir ve dualarınızı takip edin</p>
         </div>
 
         <div class="tabs">
-            <button class="tab-button active" onclick="showTab('counter')">Compteur</button>
-            <button class="tab-button" onclick="showTab('management')">Gestion</button>
-            <button class="tab-button" onclick="showTab('stats')">Statistiques</button>
+            <button class="tab-button active" onclick="showTab('counter')">Sayaç</button>
+            <button class="tab-button" onclick="showTab('management')">Yönetim</button>
+            <button class="tab-button" onclick="showTab('stats')">İstatistikler</button>
         </div>
 
-        <!-- Onglet Compteur -->
+        <!-- Sayaç Sekmesi -->
         <div id="counter" class="tab-content active">
             <div class="counter-section">
                 <select id="categorySelect" class="category-select">
-                    <option value="">Sélectionner une catégorie</option>
+                    <option value="">Kategori seçin</option>
                 </select>
 
                 <div class="counter-display">
                     <div class="counter-number" id="counterDisplay">0</div>
-                    <div class="counter-label" id="counterLabel">Cliquez pour commencer</div>
+                    <div class="counter-label" id="counterLabel">Başlamak için tıklayın</div>
                     
                     <button class="counter-button" id="countButton" onclick="incrementCounter()">
                         +1
                     </button>
                     
                     <button class="reset-button" onclick="resetDayCounter()">
-                        🔄 Reset affichage (stats préservées)
+                        🔄 Görüntüyü sıfırla (istatistikler korunur)
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- Onglet Gestion -->
+        <!-- Yönetim Sekmesi -->
         <div id="management" class="tab-content">
             <div class="management-section">
-                <h2>Gérer les catégories</h2>
+                <h2>Kategorileri Yönet</h2>
                 
                 <div class="add-category-form">
-                    <input type="text" id="newCategoryInput" class="category-input" placeholder="Nom de la nouvelle catégorie">
-                    <button class="add-button" onclick="addCategory()">Ajouter</button>
+                    <input type="text" id="newCategoryInput" class="category-input" placeholder="Yeni kategori adı">
+                    <button class="add-button" onclick="addCategory()">Ekle</button>
                 </div>
 
                 <ul id="categoriesList" class="categories-list">
-                    <!-- Les catégories seront ajoutées ici -->
+                    <!-- Kategoriler buraya eklenecek -->
                 </ul>
             </div>
 
             <div class="management-section">
-                <h2>Sauvegarde et récupération</h2>
+                <h2>Yedekleme ve Geri Yükleme</h2>
                 
                 <div class="backup-section">
                     <div class="backup-status">
-                        <span id="saveStatus">💾 Sauvegarde automatique activée</span>
-                        <small id="lastSave">Dernière sauvegarde: maintenant</small>
+                        <span id="saveStatus">💾 Otomatik yedekleme aktif</span>
+                        <small id="lastSave">Son yedekleme: şimdi</small>
                     </div>
                     
                     <div class="backup-buttons">
-                        <button class="backup-button" onclick="exportData()">📥 Exporter mes données</button>
-                        <button class="backup-button" onclick="document.getElementById('importFile').click()">📤 Importer des données</button>
+                        <button class="backup-button" onclick="exportData()">📥 Verilerimi dışa aktar</button>
+                        <button class="backup-button" onclick="document.getElementById('importFile').click()">📤 Veri içe aktar</button>
                         <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
                     </div>
                     
                     <div class="backup-info">
-                        <p>✅ Vos données sont automatiquement sauvegardées sur votre téléphone</p>
-                        <p>📱 Elles restent même si vous fermez l'application</p>
-                        <p>🔒 Utilisez l'export pour créer une sauvegarde de sécurité</p>
+                        <p>✅ Verileriniz otomatik olarak telefonunuzda yedeklenir</p>
+                        <p>📱 Uygulamaı kapattığınızda bile kalır</p>
+                        <p>🔒 Güvenlik yedeklemesi oluşturmak için dışa aktarma kullanın</p>
                     </div>
                 </div>
             </div>
 
             <div class="management-section">
-                <h2>Effacer les récits</h2>
+                <h2>Zikirleri Sil</h2>
                 
                 <div class="reset-options">
                     <div class="reset-option">
                         <select id="categoryToReset" class="category-select">
-                            <option value="">Sélectionner une catégorie</option>
+                            <option value="">Kategori seçin</option>
                         </select>
                         <div class="reset-buttons">
-                            <button class="reset-button" onclick="resetTodayCategory()">Effacer aujourd'hui</button>
-                            <button class="reset-button" onclick="resetWeekCategory()">Effacer cette semaine</button>
-                            <button class="reset-button" onclick="resetMonthCategory()">Effacer ce mois</button>
-                            <button class="reset-button danger" onclick="resetCategoryCompletely()">Effacer tout l'historique</button>
+                            <button class="reset-button" onclick="resetTodayCategory()">Bugünü sil</button>
+                            <button class="reset-button" onclick="resetWeekCategory()">Bu hafta sil</button>
+                            <button class="reset-button" onclick="resetMonthCategory()">Bu ay sil</button>
+                            <button class="reset-button danger" onclick="resetCategoryCompletely()">Tüm geçmişi sil</button>
                         </div>
                     </div>
                 </div>
 
                 <div class="danger-zone">
-                    <h3>⚠️ Zone de danger</h3>
-                    <button class="danger-button" onclick="resetAllData()">Effacer TOUTES les données</button>
-                    <p class="warning-text">Cette action supprimera définitivement tous vos compteurs et ne peut pas être annulée !</p>
+                    <h3>⚠️ Tehlike Bölgesi</h3>
+                    <button class="danger-button" onclick="resetAllData()">TÜM verileri sil</button>
+                    <p class="warning-text">Bu eylem tüm sayaçlarınızı kalıcı olarak silecek ve geri alınamaz!</p>
                 </div>
             </div>
         </div>
 
-        <!-- Onglet Statistiques -->
+        <!-- İstatistikler Sekmesi -->
         <div id="stats" class="tab-content">
             <div class="stats-section">
                 <div class="total-today">
                     <div class="total-number" id="totalToday">0</div>
-                    <div>Total aujourd'hui</div>
+                    <div>Bugün Toplam</div>
                 </div>
 
                 <div class="stats-actions">
-                    <button class="share-button" onclick="shareStatsBySMS()">📱 Partager par SMS</button>
-                    <button class="refresh-button" onclick="updateStats()">🔄 Actualiser</button>
+                    <button class="share-button" onclick="shareStatsBySMS()">📱 SMS ile paylaş</button>
+                    <button class="refresh-button" onclick="updateStats()">🔄 Yenile</button>
                 </div>
 
-                <h2>Toutes mes statistiques</h2>
+                <h2>Tüm İstatistiklerim</h2>
                 
                 <div class="table-container">
                     <table class="complete-stats-table" id="completeStatsTable">
                         <thead>
                             <tr>
-                                <th>Catégorie</th>
-                                <th>Aujourd'hui</th>
-                                <th>Cette semaine</th>
-                                <th>Ce mois</th>
-                                <th>Cette année</th>
-                                <th>Total général</th>
+                                <th>Kategori</th>
+                                <th>Bugün</th>
+                                <th>Bu Hafta</th>
+                                <th>Bu Ay</th>
+                                <th>Bu Yıl</th>
+                                <th>Genel Toplam</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Les statistiques seront ajoutées ici -->
+                            <!-- İstatistikler buraya eklenecek -->
                         </tbody>
                         <tfoot>
                             <tr class="totals-row">
-                                <td><strong>TOTAUX</strong></td>
+                                <td><strong>TOPLAMLAR</strong></td>
                                 <td><strong id="totalDay">0</strong></td>
                                 <td><strong id="totalWeek">0</strong></td>
                                 <td><strong id="totalMonth">0</strong></td>
@@ -727,18 +727,18 @@
                 </div>
 
                 <div class="stats-summary">
-                    <p id="summaryText">📊 Résumé de vos récits</p>
+                    <p id="summaryText">📊 Zikir özetiniz</p>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Indicateur de sauvegarde -->
-    <div id="saveIndicator" class="save-indicator">✅ Sauvegardé</div>
+    <div id="saveIndicator" class="save-indicator">✅ Kaydedildi</div>
 
     <script>
         // Variables globales - SYSTÈME SIMPLIFIÉ
-        let categories = JSON.parse(localStorage.getItem('categories')) || ['SubhanAllah', 'Alhamdulillah', 'Allahu Akbar'];
+        let categories = JSON.parse(localStorage.getItem('categories')) || ['Subhan Allah', 'Elhamdulillah', 'Allahu Ekber'];
         let counters = JSON.parse(localStorage.getItem('counters')) || {};
         let currentCategory = '';
         let currentDate = new Date().toDateString();
@@ -759,8 +759,8 @@
                 <h3>${title}</h3>
                 <p>${message}</p>
                 <div class="confirm-buttons">
-                    <button class="confirm-btn confirm-yes">✅ Oui</button>
-                    <button class="confirm-btn confirm-no">❌ Non</button>
+                    <button class="confirm-btn confirm-yes">✅ Evet</button>
+                    <button class="confirm-btn confirm-no">❌ Hayır</button>
                 </div>
             `;
             document.body.appendChild(confirmDiv);
@@ -956,7 +956,7 @@
                 const div = document.createElement('div');
                 div.id = 'saveIndicator';
                 div.className = 'save-indicator';
-                div.textContent = '✅ Sauvegardé';
+                div.textContent = '✅ Kaydedildi';
                 document.body.appendChild(div);
                 indicator = div;
             }
@@ -976,16 +976,16 @@
                 
                 let timeText = '';
                 if (diff < 60) {
-                    timeText = 'il y a quelques secondes';
+                    timeText = 'birkaç saniye önce';
                 } else if (diff < 3600) {
-                    timeText = `il y a ${Math.floor(diff / 60)} minutes`;
+                    timeText = `${Math.floor(diff / 60)} dakika önce`;
                 } else {
-                    timeText = date.toLocaleDateString('fr-FR');
+                    timeText = date.toLocaleDateString('tr-TR');
                 }
                 
                 const lastSaveElement = document.getElementById('lastSave');
                 if (lastSaveElement) {
-                    lastSaveElement.textContent = `Dernière sauvegarde: ${timeText}`;
+                    lastSaveElement.textContent = `Son yedekleme: ${timeText}`;
                 }
             }
         }
@@ -1019,7 +1019,7 @@
             
             // Sélecteur principal
             if (select) {
-                select.innerHTML = '<option value="">Sélectionner une catégorie</option>';
+                select.innerHTML = '<option value="">Kategori seçin</option>';
                 categories.forEach(cat => {
                     const option = document.createElement('option');
                     option.value = cat;
@@ -1030,7 +1030,7 @@
             
             // Sélecteur pour l'effacement
             if (resetSelect) {
-                resetSelect.innerHTML = '<option value="">Sélectionner une catégorie</option>';
+                resetSelect.innerHTML = '<option value="">Kategori seçin</option>';
                 categories.forEach(cat => {
                     const option = document.createElement('option');
                     option.value = cat;
@@ -1057,9 +1057,9 @@
                 li.innerHTML = `
                     <div>
                         <strong>${cat}</strong>
-                        <small style="color: #666; display: block;">Total: ${stats.total} récits</small>
+                        <small style="color: #666; display: block;">Toplam: ${stats.total} zikir</small>
                     </div>
-                    <button class="delete-button" onclick="deleteCategory(${index})">Supprimer catégorie</button>
+                    <button class="delete-button" onclick="deleteCategory(${index})">Kategoriyi sil</button>
                 `;
                 list.appendChild(li);
             });
@@ -1080,11 +1080,11 @@
                 updateCategoriesList();
                 updateStats();
                 input.value = '';
-                showCustomAlert(`✅ Catégorie "${newCategory}" ajoutée !`, 'success', 2000);
+                showCustomAlert(`✅ Kategori "${newCategory}" eklendi!`, 'success', 2000);
             } else if (categories.includes(newCategory)) {
-                showCustomAlert('⚠️ Cette catégorie existe déjà !', 'warning', 2500);
+                showCustomAlert('⚠️ Bu kategori zaten mevcut!', 'warning', 2500);
             } else {
-                showCustomAlert('⚠️ Veuillez saisir un nom de catégorie !', 'warning', 2500);
+                showCustomAlert('⚠️ Lütfen bir kategori adı girin!', 'warning', 2500);
             }
         }
 
@@ -1093,8 +1093,8 @@
             const categoryName = categories[index];
             
             showCustomConfirm(
-                '🗑️ Supprimer catégorie',
-                `Êtes-vous sûr de vouloir supprimer la catégorie "${categoryName}" ?<br><br>⚠️ Cette action supprimera aussi toutes ses données.`,
+                '🗑️ Kategoriyi Sil',
+                `"${categoryName}" kategorisini silmek istediğinizden emin misiniz?<br><br>⚠️ Bu işlem tüm verilerini de silecektir.`,
                 function() {
                     // Confirmation "Oui"
                     categories.splice(index, 1);
@@ -1111,10 +1111,10 @@
                         const counterDisplay = document.getElementById('counterDisplay');
                         const counterLabel = document.getElementById('counterLabel');
                         if (counterDisplay) counterDisplay.textContent = '0';
-                        if (counterLabel) counterLabel.textContent = 'Sélectionner une catégorie';
+                        if (counterLabel) counterLabel.textContent = 'Kategori seçin';
                     }
                     
-                    showCustomAlert(`✅ Catégorie "${categoryName}" supprimée !`, 'success', 2000);
+                    showCustomAlert(`✅ Kategori "${categoryName}" silindi!`, 'success', 2000);
                 }
             );
         }
@@ -1130,17 +1130,17 @@
                 const stats = getStatisticsForCategory(currentCategory);
                 const visualCount = Math.max(0, stats.day - visualOffset);
                 display.textContent = visualCount;
-                label.textContent = `${currentCategory} - Aujourd'hui`;
+                label.textContent = `${currentCategory} - Bugün`;
             } else {
                 display.textContent = '0';
-                label.textContent = 'Sélectionner une catégorie';
+                label.textContent = 'Kategori seçin';
             }
         }
 
         // Incrémenter le compteur - VERSION SIMPLE ET FIABLE
         function incrementCounter() {
             if (!currentCategory) {
-                showCustomAlert('🔔 CHOISIR UNE CATÉGORIE !<br><br>Veuillez d\'abord sélectionner une catégorie dans le menu déroulant avant de compter vos récits.', 'warning', 4000);
+                showCustomAlert('🔔 KATEGORİ SEÇİN!<br><br>Zikir saymaya başlamadan önce lütfen açılır menüden bir kategori seçin.', 'warning', 4000);
                 return;
             }
 
@@ -1178,23 +1178,23 @@
         // Remettre à zéro SEULEMENT l'affichage visuel (pas les statistiques)
         function resetDayCounter() {
             if (!currentCategory) {
-                showCustomAlert('🔔 CHOISIR UNE CATÉGORIE !<br><br>Veuillez d\'abord sélectionner une catégorie.', 'warning', 3000);
+                showCustomAlert('🔔 KATEGORİ SEÇİN!<br><br>Lütfen önce bir kategori seçin.', 'warning', 3000);
                 return;
             }
             
             showCustomConfirm(
-                '🔄 Reset de l\'affichage',
-                `Remettre à zéro l'AFFICHAGE du compteur pour "${currentCategory}" ?<br><br>⚠️ Les statistiques ne seront PAS affectées.`,
+                '🔄 Görüntü Sıfırlama',
+                `"${currentCategory}" için sayaç GÖRÜNTÜSÜNÜ sıfırlayın?<br><br>⚠️ İstatistikler etkilenMEYECEK.`,
                 function() {
                     // Confirmation "Oui"
                     const stats = getStatisticsForCategory(currentCategory);
                     visualOffset = stats.day; // L'affichage sera : realCount - realCount = 0
                     updateCounterDisplay();
-                    showCustomAlert('✅ Affichage remis à zéro !<br>📊 Vos statistiques sont préservées', 'success', 3000);
+                    showCustomAlert('✅ Görüntü sıfırlandı!<br>📊 İstatistikleriniz korundu', 'success', 3000);
                 },
                 function() {
                     // Confirmation "Non" - ne rien faire
-                    showCustomAlert('❌ Reset annulé', 'warning', 2000);
+                    showCustomAlert('❌ Sıfırlama iptal edildi', 'warning', 2000);
                 }
             );
         }
@@ -1264,11 +1264,11 @@
                 // Résumé
                 const summaryElement = document.getElementById('summaryText');
                 if (summaryElement) {
-                    let summary = `📊 Aujourd'hui: ${totalToday} récits`;
-                    if (totalWeek > totalToday) summary += ` • Cette semaine: ${totalWeek} récits`;
-                    if (totalMonth > totalWeek) summary += ` • Ce mois: ${totalMonth} récits`;
-                    if (totalYear > totalMonth) summary += ` • Cette année: ${totalYear} récits`;
-                    summary += ` • Total général: ${totalAll} récits 🤲`;
+                    let summary = `📊 Bugün: ${totalToday} zikir`;
+                    if (totalWeek > totalToday) summary += ` • Bu hafta: ${totalWeek} zikir`;
+                    if (totalMonth > totalWeek) summary += ` • Bu ay: ${totalMonth} zikir`;
+                    if (totalYear > totalMonth) summary += ` • Bu yıl: ${totalYear} zikir`;
+                    summary += ` • Genel toplam: ${totalAll} zikir 🤲`;
                     summaryElement.textContent = summary;
                 }
                 
@@ -1281,13 +1281,13 @@
         function resetTodayCategory() {
             const category = document.getElementById('categoryToReset').value;
             if (!category) {
-                showCustomAlert('🔔 CHOISIR UNE CATÉGORIE !<br><br>Veuillez sélectionner une catégorie à effacer.', 'warning', 3000);
+                showCustomAlert('🔔 KATEGORİ SEÇİN!<br><br>Silinecek kategoriyi seçin.', 'warning', 3000);
                 return;
             }
             
             showCustomConfirm(
-                '🗑️ Effacer aujourd\'hui',
-                `Effacer tous les récits d'AUJOURD'HUI pour "${category}" ?<br><br>⚠️ Cette action affectera les statistiques !`,
+                '🗑️ Bugünü Sil',
+                `"${category}" için BUGÜNÜN tüm zikirlerini sil?<br><br>⚠️ Bu işlem istatistikleri etkileyecek!`,
                 function() {
                     const today = new Date().toDateString();
                     if (counters[category] && counters[category][today]) {
@@ -1295,7 +1295,7 @@
                         saveCounters();
                         updateCounterDisplay();
                         updateStats();
-                        showCustomAlert('✅ Récits d\'aujourd\'hui effacés !', 'success', 2000);
+                        showCustomAlert('✅ Bugünün zikirleri silindi!', 'success', 2000);
                     }
                 }
             );
@@ -1304,13 +1304,13 @@
         function resetWeekCategory() {
             const category = document.getElementById('categoryToReset').value;
             if (!category) {
-                showCustomAlert('🔔 CHOISIR UNE CATÉGORIE !<br><br>Veuillez sélectionner une catégorie à effacer.', 'warning', 3000);
+                showCustomAlert('🔔 KATEGORİ SEÇİN!<br><br>Silinecek kategoriyi seçin.', 'warning', 3000);
                 return;
             }
             
             showCustomConfirm(
-                '🗑️ Effacer cette semaine',
-                `Effacer tous les récits de CETTE SEMAINE pour "${category}" ?<br><br>⚠️ Cette action affectera les statistiques !`,
+                '🗑️ Bu Hafta Sil',
+                `"${category}" için BU HAFTANıN tüm zikirlerini sil?<br><br>⚠️ Bu işlem istatistikleri etkileyecek!`,
                 function() {
                     const today = new Date();
                     const weekStart = getWeekStart(today);
@@ -1326,7 +1326,7 @@
                         saveCounters();
                         updateCounterDisplay();
                         updateStats();
-                        showCustomAlert('✅ Récits de cette semaine effacés !', 'success', 2000);
+                        showCustomAlert('✅ Bu haftanın zikirleri silindi!', 'success', 2000);
                     }
                 }
             );
@@ -1335,13 +1335,13 @@
         function resetMonthCategory() {
             const category = document.getElementById('categoryToReset').value;
             if (!category) {
-                showCustomAlert('🔔 CHOISIR UNE CATÉGORIE !<br><br>Veuillez sélectionner une catégorie à effacer.', 'warning', 3000);
+                showCustomAlert('🔔 KATEGORİ SEÇİN!<br><br>Silinecek kategoriyi seçin.', 'warning', 3000);
                 return;
             }
             
             showCustomConfirm(
-                '🗑️ Effacer ce mois',
-                `Effacer tous les récits de CE MOIS pour "${category}" ?<br><br>⚠️ Cette action affectera les statistiques !`,
+                '🗑️ Bu Ayı Sil',
+                `"${category}" için BU AYıN tüm zikirlerini sil?<br><br>⚠️ Bu işlem istatistikleri etkileyecek!`,
                 function() {
                     const today = new Date();
                     const monthStart = getMonthStart(today);
@@ -1357,7 +1357,7 @@
                         saveCounters();
                         updateCounterDisplay();
                         updateStats();
-                        showCustomAlert('✅ Récits de ce mois effacés !', 'success', 2000);
+                        showCustomAlert('✅ Bu ayın zikirleri silindi!', 'success', 2000);
                     }
                 }
             );
@@ -1366,17 +1366,17 @@
         function resetCategoryCompletely() {
             const category = document.getElementById('categoryToReset').value;
             if (!category) {
-                showCustomAlert('🔔 CHOISIR UNE CATÉGORIE !<br><br>Veuillez sélectionner une catégorie à effacer.', 'warning', 3000);
+                showCustomAlert('🔔 KATEGORİ SEÇİN!<br><br>Silinecek kategoriyi seçin.', 'warning', 3000);
                 return;
             }
             
             showCustomConfirm(
-                '⚠️ DANGER - Effacement total',
-                `Effacer DÉFINITIVEMENT tout l'historique de "${category}" ?<br><br>🔥 Cette action est IRRÉVERSIBLE !`,
+                '⚠️ TEHLİKE - Tamamen Silme',
+                `"${category}" kategorisinin tüm geçmişini KALICI olarak sil?<br><br>🔥 Bu işlem GERİ ALINMAZ!`,
                 function() {
                     showCustomConfirm(
-                        '🚨 DERNIÈRE CHANCE',
-                        `Êtes-vous VRAIMENT sûr ?<br><br>💀 TOUT l'historique de "${category}" sera perdu !`,
+                        '🚨 SON ŞANS',
+                        `GERÇEKTEN emin misiniz?<br><br>💀 "${category}" kategorisinin TÜM geçmişi kaybolacak!`,
                         function() {
                             // Réinitialiser complètement la catégorie
                             counters[category] = {};
@@ -1385,7 +1385,7 @@
                             saveCounters();
                             updateCounterDisplay();
                             updateStats();
-                            showCustomAlert('💥 Historique complètement effacé !', 'warning', 3000);
+                            showCustomAlert('💥 Geçmiş tamamen silindi!', 'warning', 3000);
                         }
                     );
                 }
@@ -1394,23 +1394,23 @@
 
         function resetAllData() {
             showCustomConfirm(
-                '🚨 DANGER EXTRÊME',
-                'Effacer TOUTES vos données de récits ?<br><br>💀 Cela supprimera DÉFINITIVEMENT :<br>• Tous les compteurs<br>• Tout l\'historique<br>• Toutes les statistiques',
+                '🚨 AŞİRİ TEHLİKE',
+                'TÜM zikir verilerinizi silin?<br><br>💀 Bu KALICI olarak silecek:<br>• Tüm sayaçlar<br>• Tüm geçmiş<br>• Tüm istatistikler',
                 function() {
                     showCustomConfirm(
-                        '💣 DERNIÈRE CHANCE',
-                        'Êtes-vous ABSOLUMENT certain ?<br><br>🔥 Cette action est IRRÉVERSIBLE !',
+                        '💣 SON ŞANS',
+                        'KESİNLİKLE emin misiniz?<br><br>🔥 Bu işlem GERİ ALINMAZ!',
                         function() {
                             // Demander la confirmation par saisie
                             const confirmationDiv = document.createElement('div');
                             confirmationDiv.className = 'custom-confirm';
                             confirmationDiv.innerHTML = `
-                                <h3>🔒 Confirmation finale</h3>
-                                <p>Tapez exactement <strong>"EFFACER"</strong> pour confirmer :</p>
+                                <h3>🔒 Son Onay</h3>
+                                <p>Onaylamak için tam olarak <strong>"SİL"</strong> yazın:</p>
                                 <input type="text" id="confirmInput" style="padding: 10px; font-size: 16px; margin: 10px 0; text-align: center; border: 2px solid #e53e3e; border-radius: 5px;">
                                 <div class="confirm-buttons">
-                                    <button class="confirm-btn confirm-yes">Valider</button>
-                                    <button class="confirm-btn confirm-no">Annuler</button>
+                                    <button class="confirm-btn confirm-yes">Onayla</button>
+                                    <button class="confirm-btn confirm-no">İptal</button>
                                 </div>
                             `;
                             document.body.appendChild(confirmationDiv);
@@ -1424,7 +1424,7 @@
                             }
                             
                             yesBtn.addEventListener('click', () => {
-                                if (input.value === 'EFFACER') {
+                                if (input.value === 'SİL') {
                                     // Réinitialiser toutes les catégories avec le nouveau système
                                     const today = new Date();
                                     counters = {};
@@ -1442,16 +1442,16 @@
                                     updateCounterDisplay();
                                     updateStats();
                                     closeConfirmDiv();
-                                    showCustomAlert('💥 TOUTES vos données ont été effacées !', 'warning', 4000);
+                                    showCustomAlert('💥 TÜM verileriniz silindi!', 'warning', 4000);
                                 } else {
-                                    showCustomAlert('❌ Texte incorrect ! Données préservées.', 'warning', 3000);
+                                    showCustomAlert('❌ Yanlış metin! Veriler korundu.', 'warning', 3000);
                                     closeConfirmDiv();
                                 }
                             });
                             
                             noBtn.addEventListener('click', () => {
                                 closeConfirmDiv();
-                                showCustomAlert('✅ Annulation - vos données sont sauvées !', 'success', 3000);
+                                showCustomAlert('✅ İptal - verileriniz korundu!', 'success', 3000);
                             });
                             
                             setTimeout(() => {
@@ -1479,13 +1479,13 @@
                 
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(dataBlob);
-                link.download = `compteur-recits-${new Date().toISOString().split('T')[0]}.json`;
+                link.download = `zikirmatik-${new Date().toISOString().split('T')[0]}.json`;
                 link.click();
                 
-                showCustomAlert('✅ Export réussi !<br>Fichier téléchargé avec succès', 'success', 3000);
+                showCustomAlert('✅ Dışa aktarma başarılı!<br>Dosya başarıyla indirildi', 'success', 3000);
             } catch (error) {
                 console.error('Erreur export:', error);
-                showCustomAlert('❌ Erreur lors de l\'export', 'error', 3000);
+                showCustomAlert('❌ Dışa aktarma hatası', 'error', 3000);
             }
         }
 
@@ -1499,12 +1499,12 @@
                     const importedData = JSON.parse(e.target.result);
                     
                     if (!importedData.categories || !importedData.counters) {
-                        throw new Error('Format invalide');
+                        throw new Error('Geçersiz format');
                     }
                     
                     showCustomConfirm(
-                        '📤 Importer des données',
-                        '⚠️ Importer ces données remplacera TOUTES vos données actuelles.<br><br>Voulez-vous continuer ?',
+                        '📤 Veri İçe Aktar',
+                        '⚠️ Bu verileri içe aktarmak mevcut TÜM verilerinizi değiştirecek.<br><br>Devam etmek istiyor musunuz?',
                         function() {
                             // Confirmation "Oui"
                             categories = importedData.categories;
@@ -1518,17 +1518,17 @@
                             updateCounterDisplay();
                             updateStats();
                             
-                            showCustomAlert('✅ Import réussi !<br>Vos données ont été restaurées', 'success', 3000);
+                            showCustomAlert('✅ İçe aktarma başarılı!<br>Verileriniz geri yüklendi', 'success', 3000);
                         },
                         function() {
                             // Confirmation "Non"
-                            showCustomAlert('❌ Import annulé<br>Vos données actuelles sont préservées', 'warning', 3000);
+                            showCustomAlert('❌ İçe aktarma iptal edildi<br>Mevcut verileriniz korundu', 'warning', 3000);
                         }
                     );
                     
                 } catch (error) {
                     console.error('Erreur import:', error);
-                    showCustomAlert('❌ Erreur lors de l\'import<br>Vérifiez le fichier', 'error', 3000);
+                    showCustomAlert('❌ İçe aktarma hatası<br>Dosyayı kontrol edin', 'error', 3000);
                 }
             };
             reader.readAsText(file);
@@ -1537,10 +1537,10 @@
         // Partage SMS
         function shareStatsBySMS() {
             const today = new Date();
-            const dateStr = today.toLocaleDateString('fr-FR');
+            const dateStr = today.toLocaleDateString('tr-TR');
             const todayDateString = today.toDateString();
             
-            let message = `🕌 MES RÉCITS SPIRITUELS - ${dateStr}\n`;
+            let message = `🕌 MANEVİ ZİKİRLERİM - ${dateStr}\n`;
             message += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
             
             let totalToday = 0;
@@ -1561,16 +1561,16 @@
                 
                 if (categoryTotal > 0) {
                     message += `📿 ${cat}:\n`;
-                    message += `   Aujourd'hui: ${todayCount}\n`;
-                    message += `   Total: ${categoryTotal}\n\n`;
+                    message += `   Bugün: ${todayCount}\n`;
+                    message += `   Toplam: ${categoryTotal}\n\n`;
                 }
             });
             
             message += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-            message += `📊 RÉSUMÉ:\n`;
-            message += `• Aujourd'hui: ${totalToday} récits\n`;
-            message += `• TOTAL GÉNÉRAL: ${totalGeneral} récits\n\n`;
-            message += `🤲 Qu'Allah accepte nos invocations\n`;
+            message += `📊 ÖZET:\n`;
+            message += `• Bugün: ${totalToday} zikir\n`;
+            message += `• GENEL TOPLAM: ${totalGeneral} zikir\n\n`;
+            message += `🤲 Allah dualarımızı kabul etsin\n`;
             message += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
             
             try {
@@ -1582,17 +1582,17 @@
                 
                 // Copier dans le presse-papiers
                 navigator.clipboard.writeText(message).then(() => {
-                    showCustomAlert('📱 SMS ouvert !<br>✅ Message copié dans le presse-papiers', 'success', 4000);
+                    showCustomAlert('📱 SMS açıldı!<br>✅ Mesaj panoya kopyalandı', 'success', 4000);
                 }).catch(() => {
-                    showCustomAlert('📱 Application SMS ouverte !<br>📋 Copiez manuellement si nécessaire', 'success', 4000);
+                    showCustomAlert('📱 SMS uygulaması açıldı!<br>📋 Gerekirse elle kopyalayın', 'success', 4000);
                 });
                 
             } catch (error) {
                 // En cas d'erreur, juste copier dans le presse-papiers
                 navigator.clipboard.writeText(message).then(() => {
-                    showCustomAlert('📋 Message copié dans le presse-papiers !<br>Collez dans votre app SMS', 'success', 4000);
+                    showCustomAlert('📋 Mesaj panoya kopyalandı!<br>SMS uygulamanıza yapıştırın', 'success', 4000);
                 }).catch(() => {
-                    showCustomAlert('❌ Impossible d\'ouvrir SMS<br>Essayez de copier manuellement', 'warning', 4000);
+                    showCustomAlert('❌ SMS açılamadı<br>Elle kopyalamayı deneyin', 'warning', 4000);
                 });
             }
         }
@@ -1684,7 +1684,7 @@
             window.addEventListener('load', function() {
                 navigator.serviceWorker.register('./sw.js')
                     .then(function(registration) {
-                        console.log('Service Worker enregistré avec succès:', registration.scope);
+                        console.log('Service Worker başarıyla kaydedildi:', registration.scope);
 
                         // Vérifier les mises à jour
                         registration.addEventListener('updatefound', function() {
@@ -1692,7 +1692,7 @@
                             newWorker.addEventListener('statechange', function() {
                                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
                                     // Nouvelle version disponible
-                                    if (confirm('🔄 Nouvelle version disponible ! Recharger ?')) {
+                                    if (confirm('🔄 Yeni sürüm mevcut! Yeniden yükle?')) {
                                         newWorker.postMessage({ type: 'SKIP_WAITING' });
                                         window.location.reload();
                                     }
@@ -1701,7 +1701,7 @@
                         });
                     })
                     .catch(function(error) {
-                        console.log('Erreur Service Worker:', error);
+                        console.log('Service Worker hatası:', error);
                     });
             });
 
@@ -1721,13 +1721,13 @@
             setTimeout(() => {
                 if (deferredPrompt && !localStorage.getItem('pwa-dismissed')) {
                     showCustomConfirm(
-                        '📱 Installer l\'application',
-                        'Voulez-vous installer Zikirmatik sur votre écran d\'accueil ?<br><br>✅ Accès rapide<br>📱 Fonctionne hors-ligne<br>🔒 Vos données restent privées',
+                        '📱 Uygulama Kur',
+                        'Zikirmatik\'i ana ekranınıza kurmak istiyor musunuz?<br><br>✅ Hızlı erişim<br>📱 Çevrim dışı çalışır<br>🔒 Verileriniz gizli kalır',
                         function() {
                             deferredPrompt.prompt();
                             deferredPrompt.userChoice.then((choiceResult) => {
                                 if (choiceResult.outcome === 'accepted') {
-                                    showCustomAlert('✅ Application installée !', 'success', 3000);
+                                    showCustomAlert('✅ Uygulama kuruldu!', 'success', 3000);
                                 } else {
                                     localStorage.setItem('pwa-dismissed', 'true');
                                 }
