@@ -260,8 +260,21 @@ function showTab(tabName) {
         btn.classList.remove('active');
     });
 
-    document.getElementById(tabName).classList.add('active');
-    event.target.classList.add('active');
+    const targetTab = document.getElementById(tabName);
+    if (targetTab) {
+        targetTab.classList.add('active');
+    }
+
+    // Find and activate the button that was clicked
+    const buttons = document.querySelectorAll('.tab-button');
+    buttons.forEach((btn, index) => {
+        if ((tabName === 'counter' && index === 0) ||
+            (tabName === 'group' && index === 1) ||
+            (tabName === 'management' && index === 2) ||
+            (tabName === 'stats' && index === 3)) {
+            btn.classList.add('active');
+        }
+    });
 
     setTimeout(() => {
         if (tabName === 'stats') {
@@ -269,6 +282,13 @@ function showTab(tabName) {
         } else if (tabName === 'management') {
             updateCategoriesList();
             updateCategorySelect();
+        } else if (tabName === 'group') {
+            // Reset group interface when switching to group tab
+            if (!isHost && connections.size === 0) {
+                document.getElementById('hostSection').style.display = 'none';
+                document.getElementById('joinSection').style.display = 'none';
+                document.getElementById('leaderboard').style.display = 'none';
+            }
         }
     }, 100);
 }
@@ -1035,6 +1055,12 @@ function generateGroupCode() {
 
 // Start as group host
 function startAsHost() {
+    // Check if PeerJS is loaded
+    if (typeof Peer === 'undefined') {
+        showCustomAlert('❌ PeerJS yüklenmedi!<br>Sayfayı yenileyin.', 'error', 3000);
+        return;
+    }
+
     if (peer) {
         peer.destroy();
     }
@@ -1090,6 +1116,12 @@ function showJoinForm() {
 
 // Join existing group
 function joinGroup() {
+    // Check if PeerJS is loaded
+    if (typeof Peer === 'undefined') {
+        showCustomAlert('❌ PeerJS yüklenmedi!<br>Sayfayı yenileyin.', 'error', 3000);
+        return;
+    }
+
     const code = document.getElementById('joinCodeInput').value.trim().toUpperCase();
     if (!code) {
         showCustomAlert('⚠️ Lütfen grup kodunu girin!', 'warning', 2500);
