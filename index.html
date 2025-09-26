@@ -15,6 +15,7 @@
     <!-- Icônes pour iOS -->
     <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMzAiIGZpbGw9InVybCgjZ3JhZGllbnQwX2xpbmVhcl8xXzEpIi8+CjxwYXRoIGQ9Ik05NiA0OEM3My45MDg2IDQ4IDU2IDY1LjkwODYgNTYgODhDNTYgMTEwLjA5MSA3My45MDg2IDEyOCA5NiAxMjhDMTE4LjA5MSAxMjggMTM2IDExMC4wOTEgMTM2IDg4QzEzNiA2NS45MDg2IDExOC4wOTEgNDggOTYgNDhaIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjQiLz4KPHA+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWRpZW50MF9saW5lYXJfMV8xIiB4MT0iMCIgeTE9IjAiIHgyPSIxOTIiIHkyPSIxOTIiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iIzY2N0VFQSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM3NjRCQTIiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8L3N2Zz4K">
     <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/peerjs@1.5.0/dist/peerjs.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -25,6 +26,7 @@
 
         <div class="tabs">
             <button class="tab-button active" onclick="showTab('counter')">Sayaç</button>
+            <button class="tab-button" onclick="showTab('group')">Grup</button>
             <button class="tab-button" onclick="showTab('management')">Yönetim</button>
             <button class="tab-button" onclick="showTab('stats')">İstatistikler</button>
         </div>
@@ -110,6 +112,62 @@
                     <h3>⚠️ Tehlike Bölgesi</h3>
                     <button class="danger-button" onclick="resetAllData()">TÜM verileri sil</button>
                     <p class="warning-text">Bu eylem tüm sayaçlarınızı kalıcı olarak silecek ve geri alınamaz!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grup Sekmesi -->
+        <div id="group" class="tab-content">
+            <div class="management-section">
+                <h2>👥 Grup Yarışması (Max 40 Kişi)</h2>
+
+                <div class="group-mode-selection">
+                    <button class="group-button" id="hostBtn" onclick="startAsHost()">📋 Grup Kur</button>
+                    <button class="group-button" id="joinBtn" onclick="showJoinForm()">🔗 Gruba Katıl</button>
+                </div>
+
+                <!-- Host Mode -->
+                <div id="hostSection" class="group-section" style="display: none;">
+                    <div class="group-info">
+                        <h3>👑 Grup Koordinatörüsünüz</h3>
+                        <div class="group-code-display">
+                            <label>Grup Kodu:</label>
+                            <div class="group-code" id="groupCode">-</div>
+                            <button class="share-code-btn" onclick="shareGroupCode()">📤 Kodu Paylaş</button>
+                        </div>
+                    </div>
+
+                    <div class="group-status">
+                        <h4>Bağlı Katılımcılar: <span id="participantCount">0</span>/40</h4>
+                        <small>Telefonunuz grup sunucusu olarak çalışıyor</small>
+                    </div>
+                </div>
+
+                <!-- Join Mode -->
+                <div id="joinSection" class="group-section" style="display: none;">
+                    <h3>🤝 Gruba Katıl</h3>
+                    <div class="join-form">
+                        <input type="text" id="joinCodeInput" class="category-input" placeholder="Grup kodunu girin" maxlength="12">
+                        <button class="add-button" onclick="joinGroup()">🔗 Bağlan</button>
+                    </div>
+
+                    <div id="connectionStatus" class="connection-status" style="display: none;">
+                        <p id="statusText">Bağlanıyor...</p>
+                    </div>
+                </div>
+
+                <!-- Group Leaderboard -->
+                <div id="leaderboard" class="group-section" style="display: none;">
+                    <h3>🏆 Grup Sıralaması</h3>
+                    <div class="leaderboard-container">
+                        <div id="leaderboardList" class="leaderboard-list">
+                            <!-- Leaderboard items will be added here -->
+                        </div>
+                    </div>
+
+                    <div class="group-actions">
+                        <button class="reset-button" onclick="leaveGroup()">🚪 Gruptan Ayrıl</button>
+                    </div>
                 </div>
             </div>
         </div>

@@ -1002,3 +1002,546 @@ window.addEventListener('beforeinstallprompt', function(e) {
         }
     }, 3000);
 });
+
+// ========================================
+// GROUP FUNCTIONALITY - WebRTC P2P System
+// ========================================
+
+// Group variables
+const MAX_PARTICIPANTS = 39; // Host + 39 participants = 40 total
+let peer = null;
+let isHost = false;
+let groupCode = null;
+let connections = new Map(); // Store all peer connections
+let participants = new Map(); // Store participant data
+let connectionAttempts = 0;
+let maxConnectionAttempts = 3;
+let groupData = {
+    leaderboard: [],
+    lastUpdate: Date.now(),
+    participantCount: 0
+};
+
+// Generate unique group code
+function generateGroupCode() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Exclude confusing chars
+    let result = '';
+    for (let i = 0; i < 8; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+        if (i === 3) result += '-'; // Format: ABCD-EFGH
+    }
+    return result;
+}
+
+// Start as group host
+function startAsHost() {
+    if (peer) {
+        peer.destroy();
+    }
+
+    groupCode = generateGroupCode();
+    isHost = true;
+
+    // Initialize PeerJS with the group code as ID
+    peer = new Peer(groupCode, {
+        debug: 2,
+        config: {
+            iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' }
+            ]
+        }
+    });
+
+    peer.on('open', function(id) {
+        console.log('Host peer opened with ID:', id);
+        showHostInterface();
+    });
+
+    peer.on('connection', function(conn) {
+        console.log('New participant trying to connect:', conn.peer);
+
+        // Check participant limit
+        if (participants.size >= MAX_PARTICIPANTS) {
+            console.log('Max participants reached, rejecting connection');
+            conn.send({
+                type: 'error',
+                message: 'Grup dolu! Maksimum 40 kişi katılabilir.'
+            });
+            conn.close();
+            return;
+        }
+
+        setupConnection(conn);
+    });
+
+    peer.on('error', function(err) {
+        console.error('Host peer error:', err);
+        showCustomAlert('❌ Grup oluştururken hata!<br>Tekrar deneyin.', 'error', 3000);
+    });
+}
+
+// Show join form
+function showJoinForm() {
+    document.getElementById('hostSection').style.display = 'none';
+    document.getElementById('joinSection').style.display = 'block';
+    document.getElementById('leaderboard').style.display = 'none';
+}
+
+// Join existing group
+function joinGroup() {
+    const code = document.getElementById('joinCodeInput').value.trim().toUpperCase();
+    if (!code) {
+        showCustomAlert('⚠️ Lütfen grup kodunu girin!', 'warning', 2500);
+        return;
+    }
+
+    if (peer) {
+        peer.destroy();
+    }
+
+    groupCode = code;
+    isHost = false;
+
+    // Generate unique participant ID
+    const participantId = 'user-' + Math.random().toString(36).substr(2, 9);
+
+    peer = new Peer(participantId, {
+        debug: 2,
+        config: {
+            iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' }
+            ]
+        }
+    });
+
+    peer.on('open', function(id) {
+        console.log('Participant peer opened with ID:', id);
+        connectToHost();
+    });
+
+    peer.on('error', function(err) {
+        console.error('Participant peer error:', err);
+        showCustomAlert('❌ Gruba bağlanırken hata!<br>Kod doğru mu?', 'error', 3000);
+        showConnectionStatus('Bağlantı hatası', false);
+    });
+}
+
+// Connect to host
+function connectToHost() {
+    connectionAttempts++;
+    showConnectionStatus(`Gruba bağlanıyor... (${connectionAttempts}/${maxConnectionAttempts})`, false);
+
+    const conn = peer.connect(groupCode, {
+        reliable: true
+    });
+
+    // Timeout for connection
+    const connectionTimeout = setTimeout(() => {
+        if (!conn.open) {
+            conn.close();
+            handleConnectionFailure();
+        }
+    }, 10000); // 10 second timeout
+
+    conn.on('open', function() {
+        console.log('Connected to host');
+        clearTimeout(connectionTimeout);
+        connectionAttempts = 0; // Reset attempts on success
+        setupConnection(conn);
+
+        // Send participant info
+        const userName = prompt('👤 Adınızı girin:', 'Katılımcı');
+        conn.send({
+            type: 'join',
+            data: {
+                name: userName || 'Anonim',
+                id: peer.id,
+                stats: getCurrentUserStats()
+            }
+        });
+
+        showConnectionStatus('✅ Gruba başarıyla bağlandı!', true);
+        showLeaderboard();
+    });
+
+    conn.on('error', function(err) {
+        console.error('Connection error:', err);
+        clearTimeout(connectionTimeout);
+        handleConnectionFailure();
+    });
+}
+
+// Handle connection failures with retry
+function handleConnectionFailure() {
+    if (connectionAttempts < maxConnectionAttempts) {
+        showConnectionStatus(`Tekrar deneniyor... (${connectionAttempts}/${maxConnectionAttempts})`, false);
+        setTimeout(() => {
+            connectToHost();
+        }, 3000); // Wait 3 seconds before retry
+    } else {
+        showCustomAlert('❌ Gruba bağlanılamadı!<br><br>Kontrol edin:<br>• Grup kodu doğru mu?<br>• Koordinatör aktif mi?<br>• İnternet bağlantınız var mı?', 'error', 5000);
+        showConnectionStatus('Bağlantı başarısız - Tekrar deneyin', false);
+        connectionAttempts = 0;
+    }
+}
+
+// Setup connection event handlers
+function setupConnection(conn) {
+    connections.set(conn.peer, conn);
+
+    conn.on('data', function(message) {
+        handleMessage(message, conn);
+    });
+
+    conn.on('close', function() {
+        console.log('Connection closed:', conn.peer);
+        connections.delete(conn.peer);
+        if (isHost) {
+            participants.delete(conn.peer);
+            updateParticipantCount();
+            broadcastLeaderboard();
+        }
+    });
+
+    conn.on('error', function(err) {
+        console.error('Connection error:', err);
+        connections.delete(conn.peer);
+    });
+}
+
+// Handle incoming messages
+function handleMessage(message, conn) {
+    switch (message.type) {
+        case 'join':
+            if (isHost) {
+                participants.set(conn.peer, message.data);
+                updateParticipantCount();
+                broadcastLeaderboard();
+                showCustomAlert(`👋 ${message.data.name} gruba katıldı! (${participants.size}/40)`, 'success', 2000);
+            }
+            break;
+
+        case 'stats_update':
+            if (isHost) {
+                const participant = participants.get(conn.peer);
+                if (participant) {
+                    participant.stats = message.data;
+                    participant.lastUpdate = Date.now();
+                    broadcastLeaderboard();
+                }
+            }
+            break;
+
+        case 'leaderboard':
+            if (!isHost) {
+                groupData.leaderboard = message.data;
+                groupData.participantCount = message.participantCount || 0;
+                updateLeaderboardDisplay();
+                updateParticipantInfo();
+            }
+            break;
+
+        case 'error':
+            showCustomAlert('❌ ' + message.message, 'error', 4000);
+            showConnectionStatus('Grup dolu', false);
+            break;
+    }
+}
+
+// Get current user stats
+function getCurrentUserStats() {
+    let totalToday = 0;
+    let totalWeek = 0;
+    let totalAll = 0;
+
+    categories.forEach(cat => {
+        const stats = getStatisticsForCategory(cat);
+        totalToday += stats.day;
+        totalWeek += stats.week;
+        totalAll += stats.total;
+    });
+
+    return {
+        today: totalToday,
+        week: totalWeek,
+        total: totalAll,
+        lastActive: Date.now()
+    };
+}
+
+// Broadcast leaderboard to all participants
+function broadcastLeaderboard() {
+    if (!isHost) return;
+
+    const leaderboard = Array.from(participants.entries()).map(([id, data]) => ({
+        id: id,
+        name: data.name,
+        stats: data.stats,
+        points: calculatePoints(data.stats),
+        lastUpdate: data.lastUpdate || Date.now()
+    }));
+
+    // Add host data
+    const hostStats = getCurrentUserStats();
+    leaderboard.push({
+        id: 'host',
+        name: '👑 Koordinatör',
+        stats: hostStats,
+        points: calculatePoints(hostStats),
+        lastUpdate: Date.now()
+    });
+
+    // Sort by points
+    leaderboard.sort((a, b) => b.points - a.points);
+
+    const message = {
+        type: 'leaderboard',
+        data: leaderboard,
+        participantCount: participants.size + 1 // +1 for host
+    };
+
+    // Clean up dead connections before broadcasting
+    const activeConnections = new Map();
+    connections.forEach((conn, id) => {
+        if (conn.open) {
+            try {
+                conn.send(message);
+                activeConnections.set(id, conn);
+            } catch (error) {
+                console.log('Failed to send to:', id);
+                conn.close();
+            }
+        } else {
+            participants.delete(id);
+        }
+    });
+    connections = activeConnections;
+
+    // Update host's leaderboard
+    groupData.leaderboard = leaderboard;
+    groupData.participantCount = participants.size + 1;
+    updateLeaderboardDisplay();
+    updateParticipantCount();
+}
+
+// Calculate points from stats
+function calculatePoints(stats) {
+    return (stats.today * 10) + (stats.week * 2) + Math.floor(stats.total / 10);
+}
+
+// Send stats update to host
+function sendStatsUpdate() {
+    if (!isHost && connections.size > 0) {
+        const stats = getCurrentUserStats();
+        const message = {
+            type: 'stats_update',
+            data: stats
+        };
+
+        connections.forEach(conn => {
+            if (conn.open) {
+                conn.send(message);
+            }
+        });
+    }
+}
+
+// UI Functions
+function showHostInterface() {
+    document.getElementById('hostSection').style.display = 'block';
+    document.getElementById('joinSection').style.display = 'none';
+    document.getElementById('leaderboard').style.display = 'block';
+    document.getElementById('groupCode').textContent = groupCode;
+
+    // Add capacity warning
+    const hostSection = document.getElementById('hostSection');
+    if (!document.getElementById('capacityWarning')) {
+        const warningDiv = document.createElement('div');
+        warningDiv.id = 'capacityWarning';
+        warningDiv.className = 'backup-info';
+        warningDiv.innerHTML = `
+            <p>⚠️ Maksimum 40 kişi katılabilir</p>
+            <p>📱 Telefonunuz kapalı olursa grup çalışmaz</p>
+            <p>🔋 Şarjınızın yeterli olduğundan emin olun</p>
+        `;
+        hostSection.appendChild(warningDiv);
+    }
+
+    updateParticipantCount();
+}
+
+function showLeaderboard() {
+    document.getElementById('hostSection').style.display = 'none';
+    document.getElementById('joinSection').style.display = 'none';
+    document.getElementById('leaderboard').style.display = 'block';
+}
+
+function updateParticipantCount() {
+    const count = participants.size;
+    const element = document.getElementById('participantCount');
+    if (element) {
+        element.textContent = count;
+
+        // Color coding based on capacity
+        const parentElement = element.parentElement;
+        if (count >= 35) {
+            parentElement.style.color = '#e53e3e'; // Red when near capacity
+        } else if (count >= 25) {
+            parentElement.style.color = '#ed8936'; // Orange
+        } else {
+            parentElement.style.color = '#2c7a7b'; // Default teal
+        }
+    }
+}
+
+// Update participant info for non-hosts
+function updateParticipantInfo() {
+    if (!isHost && groupData.participantCount) {
+        const statusElement = document.querySelector('#leaderboard .stats-section');
+        if (statusElement && !document.getElementById('participantInfo')) {
+            const infoDiv = document.createElement('div');
+            infoDiv.id = 'participantInfo';
+            infoDiv.className = 'group-status';
+            infoDiv.innerHTML = `<h4>Toplam Katılımcı: <span id="totalParticipants">${groupData.participantCount}</span>/40</h4>`;
+            statusElement.insertBefore(infoDiv, statusElement.firstChild);
+        } else if (document.getElementById('totalParticipants')) {
+            document.getElementById('totalParticipants').textContent = groupData.participantCount;
+        }
+    }
+}
+
+function showConnectionStatus(text, isConnected) {
+    const statusDiv = document.getElementById('connectionStatus');
+    const statusText = document.getElementById('statusText');
+
+    statusDiv.style.display = 'block';
+    statusText.textContent = text;
+
+    if (isConnected) {
+        statusDiv.className = 'connection-status connected';
+    } else {
+        statusDiv.className = 'connection-status';
+    }
+}
+
+// Update leaderboard display
+function updateLeaderboardDisplay() {
+    const container = document.getElementById('leaderboardList');
+    container.innerHTML = '';
+
+    if (groupData.leaderboard.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">Henüz katılımcı yok</p>';
+        return;
+    }
+
+    groupData.leaderboard.forEach((participant, index) => {
+        const item = document.createElement('div');
+        item.className = 'leaderboard-item';
+
+        let positionClass = 'other';
+        let positionIcon = index + 1;
+
+        if (index === 0) { positionClass = 'first'; positionIcon = '🥇'; }
+        else if (index === 1) { positionClass = 'second'; positionIcon = '🥈'; }
+        else if (index === 2) { positionClass = 'third'; positionIcon = '🥉'; }
+
+        item.innerHTML = `
+            <div class="leaderboard-position ${positionClass}">${positionIcon}</div>
+            <div class="leaderboard-info">
+                <div class="leaderboard-name">${participant.name}</div>
+                <div class="leaderboard-details">Bugün: ${participant.stats.today} • Hafta: ${participant.stats.week}</div>
+            </div>
+            <div class="leaderboard-score">
+                <div class="leaderboard-points">${participant.points} puan</div>
+                <div class="leaderboard-today">+${participant.stats.today * 10} bugün</div>
+            </div>
+        `;
+
+        container.appendChild(item);
+    });
+}
+
+// Share group code
+function shareGroupCode() {
+    const message = `🕌 Zikirmatik Grup Yarışmasına katıl!\n\nGrup Kodu: ${groupCode}\n\nBağlantı: ${window.location.href}\n\n📱 Kodu uygulamaya gir ve gruba katıl!`;
+
+    if (navigator.share) {
+        navigator.share({
+            title: 'Zikirmatik Grup Kodu',
+            text: message
+        }).catch(console.error);
+    } else if (navigator.clipboard) {
+        navigator.clipboard.writeText(message).then(() => {
+            showCustomAlert('📋 Grup kodu panoya kopyalandı!<br>WhatsApp\'ta paylaşabilirsiniz', 'success', 4000);
+        }).catch(() => {
+            showCustomAlert('❌ Kopyalama hatası<br>Elle kopyalayın: ' + groupCode, 'warning', 4000);
+        });
+    }
+}
+
+// Leave group
+function leaveGroup() {
+    showCustomConfirm(
+        '🚪 Gruptan Ayrıl',
+        'Gruptan ayrılmak istediğinizden emin misiniz?',
+        function() {
+            if (peer) {
+                peer.destroy();
+            }
+            connections.clear();
+            participants.clear();
+            groupData.leaderboard = [];
+
+            document.getElementById('hostSection').style.display = 'none';
+            document.getElementById('joinSection').style.display = 'none';
+            document.getElementById('leaderboard').style.display = 'none';
+
+            showCustomAlert('👋 Gruptan ayrıldınız', 'success', 2000);
+        }
+    );
+}
+
+// Override incrementCounter to send updates
+const originalIncrementCounter = incrementCounter;
+incrementCounter = function() {
+    originalIncrementCounter();
+    // Send update to group after a small delay
+    setTimeout(sendStatsUpdate, 500);
+};
+
+// Auto-refresh and cleanup
+setInterval(() => {
+    if (isHost && participants.size > 0) {
+        // Clean up inactive participants (no update for 5 minutes)
+        const now = Date.now();
+        const inactiveThreshold = 5 * 60 * 1000; // 5 minutes
+
+        participants.forEach((participant, id) => {
+            if (now - (participant.lastUpdate || now) > inactiveThreshold) {
+                console.log('Removing inactive participant:', id);
+                participants.delete(id);
+                const conn = connections.get(id);
+                if (conn) {
+                    conn.close();
+                    connections.delete(id);
+                }
+            }
+        });
+
+        broadcastLeaderboard();
+    }
+}, 30000); // Every 30 seconds
+
+// Connection health check
+setInterval(() => {
+    if (isHost) {
+        connections.forEach((conn, id) => {
+            if (!conn.open) {
+                connections.delete(id);
+                participants.delete(id);
+            }
+        });
+    }
+}, 10000); // Every 10 seconds
